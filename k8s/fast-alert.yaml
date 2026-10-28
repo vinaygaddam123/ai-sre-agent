@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: sre-demo-alerts
+  namespace: monitoring
+spec:
+  groups:
+    - name: sre-demo
+      rules:
+        - alert: PodOOMKilled
+          expr: kube_pod_container_status_last_terminated_reason{reason="OOMKilled", namespace="default"} == 1
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Container {{ $labels.container }} in pod {{ $labels.pod }} was OOMKilled"
+        - alert: PodCrashLooping
+          expr: kube_pod_container_status_waiting_reason{reason="CrashLoopBackOff", namespace="default"} == 1
+          for: 30s
+          labels:
+            severity: critical
+          annotations:
+            summary: "Pod {{ $labels.pod }} is in CrashLoopBackOff"

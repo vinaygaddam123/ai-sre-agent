@@ -1,0 +1,35 @@
+alertmanager:
+  enabled: false
+nodeExporter:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false
+grafana:
+  adminPassword: admin
+  service:
+    type: NodePort
+    nodePort: 30030
+  resources:
+    requests:
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+prometheus:
+  service:
+    type: NodePort
+    nodePort: 30090
+  prometheusSpec:
+    retention: 2h
+    ruleSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+    resources:
+      requests:
+        memory: 256Mi
+      limits:
+        memory: 768Mi
