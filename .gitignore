@@ -1,0 +1,14 @@
+# secrets
+.env
+.env.*
+*.pem
+secrets.txt
+
+# python
+__pycache__/
+*.pyc
+venv/
+
+# editor / os
+.vscode/
+.DS_Store
