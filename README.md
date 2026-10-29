@@ -24,8 +24,7 @@ k3d (k3s in Docker), Helm, kube-prometheus-stack (Prometheus and Grafana), Pytho
 
 ## Screenshots
 
-![Agent analysis](screenshots/01-agent-analysis.png)
-![CI build](screenshots/02-github-actions.png)
+![Agent analysis](screenshots/01-agent-analysis.jpg)
 
 ## Problems I hit and fixed
 
