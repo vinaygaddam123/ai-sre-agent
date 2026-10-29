@@ -42,3 +42,44 @@ k3d (k3s in Docker), Helm, kube-prometheus-stack (Prometheus and Grafana), Pytho
 ## Possible improvements
 
 The agent sends only the alert labels to Gemini, so the analysis is generic. Next step would be adding the pod's events and previous logs to the prompt.
+## How to run it
+
+Prerequisites: Docker, k3d, kubectl, Helm, a Gemini API key.
+
+1. **Create the cluster** (on Docker's default network, no load balancer):
+   ```bash
+   k3d cluster create sre-cluster --network bridge --no-lb \
+     --k3s-arg "--disable=traefik@server:0" \
+     -p "30030:30030@server:0:direct" -p "30090:30090@server:0:direct"
+   ```
+2. **Install monitoring:**
+   ```bash
+   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+   helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
+     -n monitoring --create-namespace -f k8s/monitoring-values.yaml --wait
+   ```
+3. **Add the alert rules and the broken app:**
+   ```bash
+   kubectl apply -f k8s/fast-alert.yaml
+   kubectl apply -f k8s/broken-app.yaml
+   ```
+4. **Create a `.env` file** with `GEMINI_API_KEY=...` and `GEMINI_MODEL=...` (it is git-ignored), then store it as a secret:
+   ```bash
+   kubectl create secret generic agent-secrets --from-env-file=.env
+   ```
+5. **Deploy the agent:**
+   ```bash
+   kubectl apply -f k8s/agent-deployment.yaml
+   kubectl logs -f deployment/ai-sre-agent
+   ```
+
+## Deployment workflow
+
+A push that changes `agent/` triggers GitHub Actions, which builds the Docker image and pushes it to GitHub Container Registry. Deploying the new image to the cluster is a manual step (`kubectl rollout restart deployment/ai-sre-agent`).
+
+## Operating notes
+
+- Alerts ignored by the agent: `Watchdog`, `PrometheusNotConnectedToAlertmanagers`, `InfoInhibitor`.
+- If Gemini returns 429, 500 or 503, the agent retries with a growing wait. A timeout is retried on the next poll.
+- To rotate the API key: update `.env`, then delete and recreate the `agent-secrets` secret and run `kubectl rollout restart deployment/ai-sre-agent`.
+- To run the agent locally against the cluster: `POLL_SECONDS=15 python agent/main.py`.
