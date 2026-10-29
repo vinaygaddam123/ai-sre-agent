@@ -12,3 +12,7 @@ venv/
 # editor / os
 .vscode/
 .DS_Store
+
+.terraform/
+*.tfstate
+*.tfstate.*
