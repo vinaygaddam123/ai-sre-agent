@@ -2,8 +2,6 @@
 
 A small incident-response agent for Kubernetes. It polls Prometheus for firing alerts, sends each one to the Google Gemini API, and logs a root-cause analysis with steps to confirm and fix it.
 
-> **Credit:** I built this by following Viswa Teja Payam's "AI SRE Agent" guide, typing and running every step myself in my own repo and Codespace, and adapting it where my environment differed. See "Differences from the guide" below.
-
 ## What it does
 
 1. A deliberately broken app (`broken-app`) is deployed with a 10 MiB memory limit, so it gets OOMKilled and then goes into CrashLoopBackOff.
