@@ -24,7 +24,7 @@ k3d (k3s in Docker), Helm, kube-prometheus-stack (Prometheus and Grafana), Pytho
 
 ## Screenshots
 
-![Agent analysis](screenshots/01-agent-analysis.jpg)
+![Agent analysis](screenshots/01-agent-analysis.png)
 
 ## Problems I hit and fixed
 
@@ -83,3 +83,6 @@ A push that changes `agent/` triggers GitHub Actions, which builds the Docker im
 - If Gemini returns 429, 500 or 503, the agent retries with a growing wait. A timeout is retried on the next poll.
 - To rotate the API key: update `.env`, then delete and recreate the `agent-secrets` secret and run `kubectl rollout restart deployment/ai-sre-agent`.
 - To run the agent locally against the cluster: `POLL_SECONDS=15 python agent/main.py`.
+## Pipeline run
+
+![Pipeline: build and deploy](screenshots/02-github-actions.png)
