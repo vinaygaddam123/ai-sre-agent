@@ -86,3 +86,7 @@ A push that changes `agent/` triggers GitHub Actions, which builds the Docker im
 ## Pipeline run
 
 ![Pipeline: build and deploy](screenshots/02-github-actions.png)
+
+On every push to `main`, the pipeline builds the image, tests it on a temporary cluster, then a self-hosted runner deploys the exact commit to the running cluster with Terraform.
+
+![Full CI/CD run](screenshots/03-full-cicd.png)
