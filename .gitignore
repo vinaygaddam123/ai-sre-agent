@@ -16,3 +16,4 @@ venv/
 .terraform/
 *.tfstate
 *.tfstate.*
+actions-runner/
