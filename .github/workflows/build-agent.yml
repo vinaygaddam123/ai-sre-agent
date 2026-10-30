@@ -64,3 +64,22 @@ jobs:
           kubectl get pods
           kubectl logs deployment/ai-sre-agent | tee agent.log
           grep -q "Agent started" agent.log
+
+            deploy-cluster:
+    needs: deploy
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Roll out the new image to the cluster with Terraform
+        working-directory: terraform
+        run: |
+          terraform init -input=false
+          terraform apply -auto-approve -input=false \
+            -state=/workspaces/ai-sre-agent/terraform/terraform.tfstate \
+            -var="image=${{ env.IMAGE }}:${{ github.sha }}"
+
+      - name: Verify the rollout
+        run: |
+          kubectl rollout status deployment/ai-sre-agent --timeout=180s
+          kubectl get deployment ai-sre-agent -o jsonpath='{.spec.template.spec.containers[0].image}'
