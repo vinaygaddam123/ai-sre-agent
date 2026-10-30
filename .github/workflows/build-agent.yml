@@ -65,7 +65,7 @@ jobs:
           kubectl logs deployment/ai-sre-agent | tee agent.log
           grep -q "Agent started" agent.log
 
-            deploy-cluster:
+  deploy-cluster:
     needs: deploy
     runs-on: self-hosted
     steps:
